@@ -10,14 +10,11 @@ import (
 func Test_FetchUSDCryptoRates(t *testing.T) {
 
 	fetch_tests := map[string]struct {
-		name                  string
-		path                  string
 		server_response       string
 		expected_return_value CoinBaseResponse
 		expected_error        error
 	}{
 		"/valid_response": {
-			path: "/valid_response",
 			server_response: `{
 				"data": {
 					"currency": "USD",
@@ -48,13 +45,13 @@ func Test_FetchUSDCryptoRates(t *testing.T) {
 	}))
 	defer server.Close()
 
-	for _, test := range fetch_tests {
-		rv, error := FetchUSDCryptoRates(server.URL + test.path)
-		if error != nil {
-			t.Errorf("Expected no error, got %v", error)
+	for key, test := range fetch_tests {
+		rv, err := FetchUSDCryptoRates(server.URL + key)
+		if err != test.expected_error {
+			t.Errorf("%s expected error %v, got %v", key, test.expected_error, err)
 		}
 		if !reflect.DeepEqual(rv, test.expected_return_value) {
-			t.Errorf("Expected %v, got %v", test.expected_return_value, rv)
+			t.Errorf("%s, expected %v, got %v", key, test.expected_return_value, rv)
 		}
 	}
 }
