@@ -40,15 +40,15 @@ func FetchUSDCryptoRates(URL string) (CoinBaseResponse, error) {
 }
 
 func ParseRateFromCoinBaseResponse(exchangeRates CoinBaseResponse, rateKey string) (decimal.Decimal, error) {
-	zeroRate := decimal.NewFromInt(0)
+	emptyRate, _ := decimal.NewFromString("")
 	rateStr, ok := exchangeRates.Data.Rates[rateKey]
 	if !ok {
-		return zeroRate, fmt.Errorf("%s rate not found", rateKey) // Return 0 instead of nil
+		return emptyRate, fmt.Errorf("%s rate not found", rateKey) // Return 0 instead of nil
 	}
 
 	rate, err := decimal.NewFromString(rateStr)
 	if err != nil {
-		return zeroRate, fmt.Errorf("failed to parse %s rate: %v", rateStr, err) // Return 0 instead of nil
+		return emptyRate, fmt.Errorf("failed to parse %s rate: %v", rateStr, err) // Return 0 instead of nil
 	}
 	return rate, nil
 }
